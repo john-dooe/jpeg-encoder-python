@@ -7,7 +7,7 @@
 ## 用法
 
 ```
-python3 jpeg_encoder.py [原图像路径] -o [编码后的JPEG图片文件名] -q [编码的质量系数（1-100）]
+python3 jpeg_encoder.py [原图像路径] -o [编码后的JPEG图片文件名] -q [编码的质量系数(1-100)]
 ```
 
 `-o` 以及 `-q` 是可选项

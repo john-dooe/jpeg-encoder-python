@@ -1,22 +1,21 @@
-from utils.utils import *
 from utils.file_writer import *
 from utils.huffman import HuffmanEncoder
 
 
-def grayscale_encoder(file_name, img, real_height, real_width, is_lossless):
+def grayscale_encoder(file_name, img, real_height, real_width, quality):
     block_shape = (8, 8)
 
     filled_height, filled_width = img.shape[:2]
     block_sum = filled_height // block_shape[0] * filled_width // block_shape[1]
 
+    # 图像分块
     img_blocks = img_to_blocks(img, block_shape)
 
-    if is_lossless:
-        dc_size_list, dc_vli_list, ac_first_byte_list, ac_huffman_list, ac_vli_list = block_preprocess(
-            img_blocks, block_sum, quan_table_lossless)
-    else:
-        dc_size_list, dc_vli_list, ac_first_byte_list, ac_huffman_list, ac_vli_list = block_preprocess(
-            img_blocks, block_sum, quan_table_lum)
+    # 根据质量系数调整量化表
+    quan_table_lum = setup_quan_table(basic_quan_table_lum, quality)
+
+    dc_size_list, dc_vli_list, ac_first_byte_list, ac_huffman_list, ac_vli_list = block_preprocess(
+        img_blocks, block_sum, quan_table_lum)
 
     # 构造哈夫曼树
     huffman_encoder_dc = HuffmanEncoder(dc_size_list)
@@ -47,8 +46,4 @@ def grayscale_encoder(file_name, img, real_height, real_width, is_lossless):
     # FF替换为FF00
     image_data = image_data.replace(b'\xff', b'\xff\x00')
 
-    if is_lossless:
-        write_jpeg(file_name, real_height, real_width, 1, image_data, [quan_table_lossless],
-                   [code_dict_dc, code_dict_ac])
-    else:
-        write_jpeg(file_name, real_height, real_width, 1, image_data, [quan_table_lum], [code_dict_dc, code_dict_ac])
+    write_jpeg(file_name, real_height, real_width, 1, image_data, [quan_table_lum], [code_dict_dc, code_dict_ac])

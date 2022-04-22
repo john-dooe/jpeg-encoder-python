@@ -1,5 +1,6 @@
 import struct
-import numpy as np
+
+from utils.utils import *
 
 
 # Start of Image
@@ -32,7 +33,7 @@ def write_dqt(quan_table, num):
         quan_table_info = b'\x00'
     else:
         quan_table_info = b'\x01'
-    quan_table_bytes = quan_table.tobytes()
+    quan_table_bytes = zig_zag(quan_table).tobytes()
 
     dqt_data = quan_table_info + quan_table_bytes
     size = struct.pack('>H', len(dqt_data) + 2)

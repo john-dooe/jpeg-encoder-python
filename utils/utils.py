@@ -26,6 +26,7 @@ def setup_quan_table(basic_quan_table, quality):
     else:
         quality = 5000 / quality
 
+    basic_quan_table = basic_quan_table.astype(np.uint32)
     quan_table = (basic_quan_table * quality + 50) / 100
     quan_table = np.clip(quan_table, 1, 255)
     quan_table = quan_table.astype(np.uint8)
